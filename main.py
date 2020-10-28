@@ -47,7 +47,9 @@ def evaluate(cols, ordc):
     adjacentColPairs = [[cols[ordc[i]], cols[ordc[i - 1]]] for i in range(1, len(ordc))]
     return sum([euclid(i[1], i[0]) for i in adjacentColPairs])
 
-
+# random swap function. swaps two random positions in the given array (ordering of colours)
+# input: solution: solution, ordering of colours
+# output: swap_solution, ordering of colours with two random positions swapped
 def random_swap(solution):
 
     # initialise swap array and variables
@@ -58,58 +60,66 @@ def random_swap(solution):
     ran_position2 = 0
 
     # take copy of the solution passed in
-    neighbour_swap_solution = solution[:]
+    swap_solution = solution[:]
 
     # generate two random positions in the array
-    ran_position1 = rnd.randint(0, len(solution) - 1)
-    ran_position2 = rnd.randint(0, len(solution) - 1)
+    ran_position1 = rnd.randint(0, len(swap_solution) - 1)
+    ran_position2 = rnd.randint(0, len(swap_solution) - 1)
 
     # notes for team: should we put a check in to make sure that the ran_positions dont give the same value
 
-    # switch the values of these two positions
-    swap_val1 = neighbour_swap_solution[ran_position1]
-    swap_val2 = neighbour_swap_solution[ran_position2]
+    # store positions being swapped in temp variables
+    swap_val1 = swap_solution[ran_position1]
+    swap_val2 = swap_solution[ran_position2]
 
-    neighbour_swap_solution[ran_position1] = swap_val2
-    neighbour_swap_solution[ran_position2] = swap_val1
+    # complete swap by swapping values at the random positions
+    swap_solution[ran_position1] = swap_val2
+    swap_solution[ran_position2] = swap_val1
 
-    return neighbour_swap_solution # return the random switched array
+    return swap_solution # return the random swap solution
 
-
+# hill_climbing function. generates random solution, performs a random swap of two elements in that solution
+# compared the euclidean distance between both solution and stores the best with the lowest distance
+# Input: hc_iterations, the number of iterations to run the random swap check
+# Output: best_solution, the best solution during hill climbing process
+#         improvement_trace, storing the distance at every point an improvement has been made
 def hill_climbing(hc_iterations):
 
-    improvement_trace = []
+    hc_improvement_trace = [] # stores distance improvements
 
     # generate a random solution using random_sol
-    best_solution = random_sol()
+    hc_best_solution = random_sol()
 
     for i in range(hc_iterations):
-        best_solution_distance = evaluate(colors, best_solution)
+        best_solution_distance = evaluate(colors, hc_best_solution)
 
-        ran_swap_solution = random_swap(best_solution)
+        ran_swap_solution = random_swap(hc_best_solution)
         ran_swap_solution_distance = evaluate(colors, ran_swap_solution)
 
-        if(ran_swap_solution_distance < best_solution_distance):
-            best_solution = ran_swap_solution[:]
-            improvement_trace.append(ran_swap_solution_distance)
+        if ran_swap_solution_distance < best_solution_distance:
+            hc_best_solution = ran_swap_solution[:]
+            hc_improvement_trace.append(ran_swap_solution_distance)
 
-    return best_solution, improvement_trace
+    return hc_best_solution, hc_improvement_trace
 
 
-def multi_hill_climbing(mhcIterations):
+def multi_hill_climbing(mhc_iterations, hc_iterations):
     # initialise arrays for solutions
     # initialise variables to store distances
+    mhc_best_solution_distance = 1000 # number larger than any possible distance
+    mhc_improvement_trace = []
 
-    # for loop for mhcIterations
-        # call hillclimbing algorithm
+    for i in range(mhc_iterations):
+        current_solution, hc_improve_trace = hill_climbing(hc_iterations)
 
-        # evaluate current solution
+        current_solution_distance = evaluate(colors, current_solution)
 
-        # if the current solutions evaluation is better than the best soltuion evaluation then
-            # make this the best solution
+        if current_solution_distance < mhc_best_solution_distance:
+            mhc_best_solution = current_solution
+            mhc_best_solution_distance = current_solution_distance
+            mhc_improvement_trace.append(current_solution)
 
-    # return the best solution
-    return
+    return mhc_best_solution, mhc_best_solution_distance, mhc_improvement_trace
 
 
 # ***************************************************************************************************************
@@ -135,14 +145,15 @@ e2 = evaluate(colors, order2)
 print(f'Evaluation of order2: {e2}')  # Displaying all decimals
 print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
 # NEW COMMENT BY WILL, hi there
-#solution = random_sol()
-#print(solution)
 
-#neighbour = generate_random_swap(solution)
-#print(neighbour)
-best_sol_hc, imp_trace = hill_climbing(10000)
+best_sol_hc, imp_trace = hill_climbing(1)
 plot_colors(colors, best_sol_hc, 40)
 e3 = evaluate(colors, best_sol_hc)
 print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
 print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 4 decimals. This is better for display
 
+best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000)
+plot_colors(colors, best_sol_mhc, 40)
+e4 = evaluate(colors, best_sol_hc)
+print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
+print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
