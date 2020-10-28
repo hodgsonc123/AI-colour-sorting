@@ -2,6 +2,7 @@ import numpy as np  # Numerical library, used keeing the list of colours and com
 import matplotlib.pyplot as plt
 import random as rnd
 
+
 # Read in the color data file
 # Input: string with file name
 # Output: the number of colours (integer), and a list numpy arrays with all the colours
@@ -47,6 +48,59 @@ def evaluate(cols, ordc):
     return sum([euclid(i[1], i[0]) for i in adjacentColPairs])
 
 
+def generate_random_switch(solution):
+
+    #initialise random flip solution array
+    # initialise random array index locations variables
+
+    # take copy of the solution passed in
+
+    # generate two random positions in the array
+
+    # switch the values of these two positions
+
+    # return the random switched array
+
+    return
+
+
+def hill_climbing(hciterations):
+    # initialise arrays for solutions
+    # initialise values to store distances
+
+    # generate a random solution using random_sol
+
+    # for loop running for 'iterations'
+        # evaluate the random solution using evaluate()
+
+        # generate random switch solution using generate_random_switch(solution)
+
+        # evaluate the random switch solution
+
+        # if the random switch solution is better than the initial solution then
+            # make this the initial solution for next iteration of for loop
+
+    # return the best solution
+    return
+
+
+def multi_hill_climbing(mhcIterations):
+    # initialise arrays for solutions
+    # initialise variables to store distances
+
+    # for loop for mhcIterations
+        # call hillclimbing algorithm
+
+        # evaluate current solution
+
+        # if the current solutions evaluation is better than the best soltuion evaluation then
+            # make this the best solution
+
+    # return the best solution
+    return
+
+
+# ***************************************************************************************************************
 ncolors, colors = read_data("col10.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
