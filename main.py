@@ -48,40 +48,52 @@ def evaluate(cols, ordc):
     return sum([euclid(i[1], i[0]) for i in adjacentColPairs])
 
 
-def generate_random_switch(solution):
+def random_swap(solution):
 
-    #initialise random flip solution array
-    # initialise random array index locations variables
+    # initialise swap array and variables
+    neighbour_solution = []
+    swap_val1 = 0
+    swap_val2 = 0
+    ran_position1 = 0
+    ran_position2 = 0
 
     # take copy of the solution passed in
+    neighbour_swap_solution = solution[:]
 
     # generate two random positions in the array
+    ran_position1 = rnd.randint(0, len(solution) - 1)
+    ran_position2 = rnd.randint(0, len(solution) - 1)
+
+    # notes for team: should we put a check in to make sure that the ran_positions dont give the same value
 
     # switch the values of these two positions
+    swap_val1 = neighbour_swap_solution[ran_position1]
+    swap_val2 = neighbour_swap_solution[ran_position2]
 
-    # return the random switched array
+    neighbour_swap_solution[ran_position1] = swap_val2
+    neighbour_swap_solution[ran_position2] = swap_val1
 
-    return
+    return neighbour_swap_solution # return the random switched array
 
 
-def hill_climbing(hciterations):
-    # initialise arrays for solutions
-    # initialise values to store distances
+def hill_climbing(hc_iterations):
+
+    improvement_trace = []
 
     # generate a random solution using random_sol
+    best_solution = random_sol()
 
-    # for loop running for 'iterations'
-        # evaluate the random solution using evaluate()
+    for i in range(hc_iterations):
+        best_solution_distance = evaluate(colors, best_solution)
 
-        # generate random switch solution using generate_random_switch(solution)
+        ran_swap_solution = random_swap(best_solution)
+        ran_swap_solution_distance = evaluate(colors, ran_swap_solution)
 
-        # evaluate the random switch solution
+        if(ran_swap_solution_distance < best_solution_distance):
+            best_solution = ran_swap_solution[:]
+            improvement_trace.append(ran_swap_solution_distance)
 
-        # if the random switch solution is better than the initial solution then
-            # make this the initial solution for next iteration of for loop
-
-    # return the best solution
-    return
+    return best_solution, improvement_trace
 
 
 def multi_hill_climbing(mhcIterations):
@@ -101,7 +113,7 @@ def multi_hill_climbing(mhcIterations):
 
 
 # ***************************************************************************************************************
-ncolors, colors = read_data("col10.txt")  # pass in file to reading function
+ncolors, colors = read_data("col100.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
 print("First 5 colours:")
@@ -120,7 +132,17 @@ print(f'Evaluation of order1: {e1}')  # Displaying all decimals
 print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 e2 = evaluate(colors, order2)
-print(f'Evaluation of order1: {e2}')  # Displaying all decimals
-print(f'Evaluation of order1: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
-
+print(f'Evaluation of order2: {e2}')  # Displaying all decimals
+print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
 # NEW COMMENT BY WILL, hi there
+#solution = random_sol()
+#print(solution)
+
+#neighbour = generate_random_swap(solution)
+#print(neighbour)
+best_sol_hc, imp_trace = hill_climbing(10000)
+plot_colors(colors, best_sol_hc, 40)
+e3 = evaluate(colors, best_sol_hc)
+print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
+print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 4 decimals. This is better for display
+
