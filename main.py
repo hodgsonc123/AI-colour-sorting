@@ -1,9 +1,3 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-# git test
-
 import numpy as np  # Numerical library, used keeing the list of colours and computing the Euclidean distance
 import matplotlib.pyplot as plt
 import random as rnd
@@ -29,11 +23,12 @@ def plot_colors(col_list, col_order, ratio=40):
     axes.axis('off')
     plt.show()
 
+
 # Function to generate a random solution (random ordering)  - we can generate a random ordering of the list by using
 # the shuffle function from the random library
 def random_sol():
-    sol = list(range(ncolors))  # list of consequtive numbers from 0 to ncolors
-    # Shuffle the elements in the list randomly. Shuffles in place and doesn’t retunr a value
+    sol = list(range(ncolors))  # list of consecutive numbers from 0 to ncolors
+    # Shuffle the elements in the list randomly. Shuffles in place and does not return a value
     rnd.shuffle(sol)
     return sol
 
@@ -52,11 +47,11 @@ def evaluate(cols, ordc):
     return sum([euclid(i[1], i[0]) for i in adjacentColPairs])
 
 
-ncolors, colors = read_data("col10.txt") #pass in file to reading function
+ncolors, colors = read_data("col10.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
 print("First 5 colours:")
-print(colors[0:5, :]) #prints rgb values for first five colours
+print(colors[0:5, :])  # prints rgb values for first five colours
 
 # Plot all the colors in the order they are listed in the file
 order1 = list(range(ncolors))  # list of consecutive numbers from 0 to ncolors
@@ -74,4 +69,4 @@ e2 = evaluate(colors, order2)
 print(f'Evaluation of order1: {e2}')  # Displaying all decimals
 print(f'Evaluation of order1: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-# NEW COMMENT BY WILL
+# NEW COMMENT BY WILL, hi there
