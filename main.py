@@ -2,7 +2,7 @@
 
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-# changeeeee
+# changeeeees, its not workinggggg
 
 import numpy as np     # Numerical library, used keeing the list of colours and computing the Euclidean distance
 import matplotlib.pyplot as plt
