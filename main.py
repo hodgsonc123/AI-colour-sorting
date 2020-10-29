@@ -47,11 +47,11 @@ def evaluate(cols, ordc):
     adjacentColPairs = [[cols[ordc[i]], cols[ordc[i - 1]]] for i in range(1, len(ordc))]
     return sum([euclid(i[1], i[0]) for i in adjacentColPairs])
 
+
 # random swap function. swaps two random positions in the given array (ordering of colours)
 # input: solution: solution, ordering of colours
 # output: swap_solution, ordering of colours with two random positions swapped
 def random_swap(solution):
-
     # initialise swap array and variables
     neighbour_solution = []
     swap_val1 = 0
@@ -67,6 +67,9 @@ def random_swap(solution):
     ran_position2 = rnd.randint(0, len(swap_solution) - 1)
 
     # notes for team: should we put a check in to make sure that the ran_positions dont give the same value
+    # If random positions are the same then change ran_position2
+    while ran_position1 == ran_position2:
+        ran_position2 = rnd.randint(0, len(swap_solution) - 1)
 
     # store positions being swapped in temp variables
     swap_val1 = swap_solution[ran_position1]
@@ -76,7 +79,47 @@ def random_swap(solution):
     swap_solution[ran_position1] = swap_val2
     swap_solution[ran_position2] = swap_val1
 
-    return swap_solution # return the random swap solution
+    return swap_solution  # return the random swap solution
+
+
+# scramble function
+def random_scramble(solution):
+    # take copy of the solution passed in
+    scramble_solution = solution[:]
+
+    # generate two random positions in the array
+    ran_position1 = rnd.randint(0, len(scramble_solution) - 1)
+    ran_position2 = rnd.randint(0, len(scramble_solution) - 1)
+
+    # If random positions are the same then change ran_position2
+    while ran_position1 == ran_position2:
+        ran_position2 = rnd.randint(0, len(scramble_solution) - 1)
+
+    # Order the random positions so ran_position1 is smaller than ran_position2
+    if ran_position1 > ran_position2:
+        placeholder = ran_position1
+        ran_position1 = ran_position2
+        ran_position2 = placeholder
+
+    # Take the section that we want to scramble
+    scramble_section = scramble_solution[ran_position1:ran_position2]
+    # Shuffle all the indexes in the section we want to scramble
+    rnd.shuffle(scramble_section)
+
+    # Put solution back together
+    # Get the unscrambled section at the start of the solution
+    section_before_rnd1 = scramble_solution[0:ran_position1]
+    # Ger the unscrambled section at the end of the solution
+    section_after_rnd2 = scramble_solution[ran_position2:len(scramble_solution)]
+    # Add the start section to the solution
+    scramble_solution = section_before_rnd1
+    # Add the scrambled section to the solution
+    scramble_solution.extend(scramble_section)
+    # Finally add the end section to the solution
+    scramble_solution.extend(section_after_rnd2)
+
+    return scramble_solution
+
 
 # hill_climbing function. generates random solution, performs a random swap of two elements in that solution
 # compared the euclidean distance between both solution and stores the best with the lowest distance
@@ -84,8 +127,7 @@ def random_swap(solution):
 # Output: best_solution, the best solution during hill climbing process
 #         improvement_trace, storing the distance at every point an improvement has been made
 def hill_climbing(hc_iterations):
-
-    hc_improvement_trace = [] # stores distance improvements
+    hc_improvement_trace = []  # stores distance improvements
 
     # generate a random solution using random_sol
     hc_best_solution = random_sol()
@@ -93,12 +135,20 @@ def hill_climbing(hc_iterations):
     for i in range(hc_iterations):
         best_solution_distance = evaluate(colors, hc_best_solution)
 
-        ran_swap_solution = random_swap(hc_best_solution)
-        ran_swap_solution_distance = evaluate(colors, ran_swap_solution)
+        #random_swap(hc_best_solution)
+        random_scramble(hc_best_solution)
 
-        if ran_swap_solution_distance < best_solution_distance:
-            hc_best_solution = ran_swap_solution[:]
-            hc_improvement_trace.append(ran_swap_solution_distance)
+        #ran_swap_solution = random_swap(hc_best_solution)
+        #ran_swap_solution_distance = evaluate(colors, ran_swap_solution)
+        ran_scramble_solution = random_scramble(hc_best_solution)
+        ran_scramble_solution_distance = evaluate(colors, ran_scramble_solution)
+
+       # if ran_swap_solution_distance < best_solution_distance:
+       #     hc_best_solution = ran_swap_solution[:]
+       #     hc_improvement_trace.append(ran_swap_solution_distance)
+        if ran_scramble_solution_distance < best_solution_distance:
+            hc_best_solution = ran_scramble_solution[:]
+            hc_improvement_trace.append(ran_scramble_solution_distance)
 
     return hc_best_solution, hc_improvement_trace
 
@@ -106,7 +156,7 @@ def hill_climbing(hc_iterations):
 def multi_hill_climbing(mhc_iterations, hc_iterations):
     # initialise arrays for solutions
     # initialise variables to store distances
-    mhc_best_solution_distance = 1000 # number larger than any possible distance
+    mhc_best_solution_distance = 1000  # number larger than any possible distance
     mhc_improvement_trace = []
 
     for i in range(mhc_iterations):
@@ -144,16 +194,17 @@ print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 
 e2 = evaluate(colors, order2)
 print(f'Evaluation of order2: {e2}')  # Displaying all decimals
 print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
-# NEW COMMENT BY WILL, hi there
 
-best_sol_hc, imp_trace = hill_climbing(1)
+best_sol_hc, imp_trace = hill_climbing(1000)
 plot_colors(colors, best_sol_hc, 40)
 e3 = evaluate(colors, best_sol_hc)
 print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
 print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000)
-plot_colors(colors, best_sol_mhc, 40)
-e4 = evaluate(colors, best_sol_hc)
-print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
-print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
+#best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000)
+#plot_colors(colors, best_sol_mhc, 40)
+#e4 = evaluate(colors, best_sol_hc)
+#print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
+#print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
+
+
