@@ -207,14 +207,14 @@ def hill_climbing(hc_iterations, method_choice):
     return hc_best_solution, hc_improvement_trace
 
 
-def multi_hill_climbing(mhc_iterations, hc_iterations):
+def multi_hill_climbing(mhc_iterations, hc_iterations, method_choice):
     # initialise arrays for solutions
     # initialise variables to store distances
     mhc_best_solution_distance = 1000  # number larger than any possible distance
     mhc_improvement_trace = []
 
     for i in range(mhc_iterations):
-        current_solution, hc_improve_trace = hill_climbing(hc_iterations)
+        current_solution, hc_improve_trace = hill_climbing(hc_iterations, method_choice)
 
         current_solution_distance = evaluate(colors, current_solution)
 
@@ -255,10 +255,10 @@ e3 = evaluate(colors, best_sol_hc)
 print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
 print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-#best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000)
-#plot_colors(colors, best_sol_mhc, 40)
-#e4 = evaluate(colors, best_sol_hc)
-#print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
-#print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
+best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000, "inversion") # Include either "swap", "inversion" or "scramble"
+plot_colors(colors, best_sol_mhc, 40)
+e4 = evaluate(colors, best_sol_mhc)
+print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
+print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 
