@@ -52,13 +52,6 @@ def evaluate(cols, ordc):
 # input: solution: solution, ordering of colours
 # output: swap_solution, ordering of colours with two random positions swapped
 def random_swap(solution):
-    # initialise swap array and variables
-    neighbour_solution = []
-    swap_val1 = 0
-    swap_val2 = 0
-    ran_position1 = 0
-    ran_position2 = 0
-
     # take copy of the solution passed in
     swap_solution = solution[:]
 
@@ -82,7 +75,9 @@ def random_swap(solution):
     return swap_solution  # return the random swap solution
 
 
-# inverse function
+# inverse function, inverts values between two positions in given array of colour order
+# input: solution, ordering of colours
+# output: inverse_solution, inverted values between two points in array
 def random_inverse(solution):
     # take copy of the solution passed in
     inverse_solution = solution[:]
@@ -121,7 +116,9 @@ def random_inverse(solution):
     return inverse_solution
 
 
-# scramble function
+# scramble function, randomly rearranges values between two random points in given array
+# input: solution, array ordering of colours
+# output: scramble_solution, array with scrambled values between two points
 def random_scramble(solution):
     # take copy of the solution passed in
     scramble_solution = solution[:]
@@ -184,7 +181,7 @@ def hill_climbing(hc_iterations, method_choice):
                 hc_best_solution = ran_swap_solution[:]
                 hc_improvement_trace.append(ran_swap_solution_distance)
 
-        if method_choice == "inversion":
+        elif method_choice == "inversion":
             random_inverse(hc_best_solution)
 
             ran_inverse_solution = random_scramble(hc_best_solution)
@@ -194,7 +191,7 @@ def hill_climbing(hc_iterations, method_choice):
                 hc_best_solution = ran_inverse_solution[:]
                 hc_improvement_trace.append(ran_inverse_solution_distance)
 
-        if method_choice == "scramble":
+        elif method_choice == "scramble":
             random_scramble(hc_best_solution)
 
             ran_scramble_solution = random_scramble(hc_best_solution)
@@ -203,6 +200,8 @@ def hill_climbing(hc_iterations, method_choice):
             if ran_scramble_solution_distance < best_solution_distance:
                 hc_best_solution = ran_scramble_solution[:]
                 hc_improvement_trace.append(ran_scramble_solution_distance)
+        else:
+            print("invalid algorithm")
 
     return hc_best_solution, hc_improvement_trace
 
@@ -225,6 +224,23 @@ def multi_hill_climbing(mhc_iterations, hc_iterations, method_choice):
 
     return mhc_best_solution, mhc_best_solution_distance, mhc_improvement_trace
 
+def evaluate_best_method():
+
+    test_iterations = 0
+    swap_improvement_trace = []
+
+    for i in range(10):
+        test_iterations += 1000
+        best_sol_hc, imp_trace = hill_climbing(test_iterations, "swap")
+        swap_evaluation = evaluate(colors, best_sol_hc)
+        swap_improvement_trace.append(swap_evaluation)
+
+    plt.figure()
+    plt.suptitle('Hill Climbing Testing Iteration number')
+    plt.plot(swap_improvement_trace)
+    plt.ylabel("Distance Value")
+    plt.xlabel("Iteration")
+    plt.show()
 
 # ***************************************************************************************************************
 ncolors, colors = read_data("col100.txt")  # pass in file to reading function
@@ -245,20 +261,20 @@ e1 = evaluate(colors, order1)
 print(f'Evaluation of order1: {e1}')  # Displaying all decimals
 print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-e2 = evaluate(colors, order2)
-print(f'Evaluation of order2: {e2}')  # Displaying all decimals
-print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
+#e2 = evaluate(colors, order2)
+#print(f'Evaluation of order2: {e2}')  # Displaying all decimals
+#print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_hc, imp_trace = hill_climbing(1000, "inversion") # Include either "swap", "inversion" or "scramble"
+best_sol_hc, imp_trace = hill_climbing(10000, "scramble") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_hc, 40)
 e3 = evaluate(colors, best_sol_hc)
 print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
 print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000, "inversion") # Include either "swap", "inversion" or "scramble"
+best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000, "scramble") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_mhc, 40)
 e4 = evaluate(colors, best_sol_mhc)
 print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
 print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-
+#evaluate_best_method()
