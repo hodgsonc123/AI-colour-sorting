@@ -82,6 +82,45 @@ def random_swap(solution):
     return swap_solution  # return the random swap solution
 
 
+# inverse function
+def random_inverse(solution):
+    # take copy of the solution passed in
+    inverse_solution = solution[:]
+
+    # generate two random positions in the array
+    ran_position1 = rnd.randint(0, len(inverse_solution) - 1)
+    ran_position2 = rnd.randint(0, len(inverse_solution) - 1)
+
+    # If random positions are the same then change ran_position2
+    while ran_position1 == ran_position2:
+        ran_position2 = rnd.randint(0, len(inverse_solution) - 1)
+
+    # Order the random positions so ran_position1 is smaller than ran_position2
+    if ran_position1 > ran_position2:
+        placeholder = ran_position1
+        ran_position1 = ran_position2
+        ran_position2 = placeholder
+
+    # Take the section that we want to inverse
+    inverse_selection = inverse_solution[ran_position1:ran_position2]
+    # Reverse all the indexes in the section we want to inverse
+    inverse_selection.reverse()
+
+    # Put solution back together
+    # Get the original section at the start of the solution
+    section_before_rnd1 = inverse_solution[0:ran_position1]
+    # Get the section at the end of the solution
+    section_after_rnd2 = inverse_solution[ran_position2:len(inverse_solution)]
+    # Add the start section to the solution
+    inverse_solution = section_before_rnd1
+    # Add the reversed section to the solution
+    inverse_solution.extend(inverse_selection)
+    # Finally add the end section to the solution
+    inverse_solution.extend(section_after_rnd2)
+
+    return inverse_solution
+
+
 # scramble function
 def random_scramble(solution):
     # take copy of the solution passed in
@@ -109,7 +148,7 @@ def random_scramble(solution):
     # Put solution back together
     # Get the unscrambled section at the start of the solution
     section_before_rnd1 = scramble_solution[0:ran_position1]
-    # Ger the unscrambled section at the end of the solution
+    # Get the unscrambled section at the end of the solution
     section_after_rnd2 = scramble_solution[ran_position2:len(scramble_solution)]
     # Add the start section to the solution
     scramble_solution = section_before_rnd1
@@ -123,10 +162,10 @@ def random_scramble(solution):
 
 # hill_climbing function. generates random solution, performs a random swap of two elements in that solution
 # compared the euclidean distance between both solution and stores the best with the lowest distance
-# Input: hc_iterations, the number of iterations to run the random swap check
+# Input: hc_iterations (the number of iterations to run the random swap check) and permutation method e.g. 'swap', 'inversion', 'scramble'
 # Output: best_solution, the best solution during hill climbing process
 #         improvement_trace, storing the distance at every point an improvement has been made
-def hill_climbing(hc_iterations):
+def hill_climbing(hc_iterations, method_choice):
     hc_improvement_trace = []  # stores distance improvements
 
     # generate a random solution using random_sol
@@ -135,20 +174,35 @@ def hill_climbing(hc_iterations):
     for i in range(hc_iterations):
         best_solution_distance = evaluate(colors, hc_best_solution)
 
-        #random_swap(hc_best_solution)
-        random_scramble(hc_best_solution)
+        if method_choice == "swap":
+            random_swap(hc_best_solution)
 
-        #ran_swap_solution = random_swap(hc_best_solution)
-        #ran_swap_solution_distance = evaluate(colors, ran_swap_solution)
-        ran_scramble_solution = random_scramble(hc_best_solution)
-        ran_scramble_solution_distance = evaluate(colors, ran_scramble_solution)
+            ran_swap_solution = random_swap(hc_best_solution)
+            ran_swap_solution_distance = evaluate(colors, ran_swap_solution)
 
-       # if ran_swap_solution_distance < best_solution_distance:
-       #     hc_best_solution = ran_swap_solution[:]
-       #     hc_improvement_trace.append(ran_swap_solution_distance)
-        if ran_scramble_solution_distance < best_solution_distance:
-            hc_best_solution = ran_scramble_solution[:]
-            hc_improvement_trace.append(ran_scramble_solution_distance)
+            if ran_swap_solution_distance < best_solution_distance:
+                hc_best_solution = ran_swap_solution[:]
+                hc_improvement_trace.append(ran_swap_solution_distance)
+
+        if method_choice == "inversion":
+            random_inverse(hc_best_solution)
+
+            ran_inverse_solution = random_scramble(hc_best_solution)
+            ran_inverse_solution_distance = evaluate(colors, ran_inverse_solution)
+
+            if ran_inverse_solution_distance < best_solution_distance:
+                hc_best_solution = ran_inverse_solution[:]
+                hc_improvement_trace.append(ran_inverse_solution_distance)
+
+        if method_choice == "scramble":
+            random_scramble(hc_best_solution)
+
+            ran_scramble_solution = random_scramble(hc_best_solution)
+            ran_scramble_solution_distance = evaluate(colors, ran_scramble_solution)
+
+            if ran_scramble_solution_distance < best_solution_distance:
+                hc_best_solution = ran_scramble_solution[:]
+                hc_improvement_trace.append(ran_scramble_solution_distance)
 
     return hc_best_solution, hc_improvement_trace
 
@@ -195,7 +249,7 @@ e2 = evaluate(colors, order2)
 print(f'Evaluation of order2: {e2}')  # Displaying all decimals
 print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_hc, imp_trace = hill_climbing(1000)
+best_sol_hc, imp_trace = hill_climbing(1000, "inversion") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_hc, 40)
 e3 = evaluate(colors, best_sol_hc)
 print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
