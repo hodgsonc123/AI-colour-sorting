@@ -116,15 +116,25 @@ def best_iteration(file, clusters, iterations):
 # ---- main ----
 
 # Testing variables
-FILE = "col500.txt"
+FILE1 = "col100.txt"
+FILE2 = "col500.txt"
 NUMBER_CLUSTERS = 7
 NUMBER_ITERATIONS = 50
 
 # Call best_iteration function with the variables above
-ncols, best_sorted_colors = best_iteration(FILE, NUMBER_CLUSTERS, NUMBER_ITERATIONS)
+ncols, best_sorted_colors = best_iteration(FILE1, NUMBER_CLUSTERS, NUMBER_ITERATIONS)
 # Plot the best_sorted_color list as a visual
 order = list(range(ncols))
 plot_colors(best_sorted_colors, order)
 # Print to terminal the variables used for the current solution
 print("Final ordered list: ")
-print(*['File:', FILE, '| Number of clusters:', NUMBER_CLUSTERS, '| Number of iterations:', NUMBER_ITERATIONS])
+print(*['File:', FILE1, '| Number of clusters:', NUMBER_CLUSTERS, '| Number of iterations:', NUMBER_ITERATIONS])
+
+# Call best_iteration function with the variables above
+ncols, best_sorted_colors = best_iteration(FILE2, NUMBER_CLUSTERS, NUMBER_ITERATIONS)
+# Plot the best_sorted_color list as a visual
+order = list(range(ncols))
+plot_colors(best_sorted_colors, order)
+# Print to terminal the variables used for the current solution
+print("Final ordered list: ")
+print(*['File:', FILE2, '| Number of clusters:', NUMBER_CLUSTERS, '| Number of iterations:', NUMBER_ITERATIONS])
