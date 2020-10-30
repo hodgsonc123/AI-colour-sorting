@@ -224,6 +224,7 @@ def multi_hill_climbing(mhc_iterations, hc_iterations, method_choice):
 
     return mhc_best_solution, mhc_best_solution_distance, mhc_improvement_trace
 
+
 def evaluate_best_method():
 
     test_iterations = 0
