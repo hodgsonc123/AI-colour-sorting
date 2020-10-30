@@ -230,8 +230,8 @@ def evaluate_best_method():
     test_iterations = 0
     swap_improvement_trace = []
 
-    for i in range(10):
-        test_iterations += 1000
+    for i in range(6):
+        test_iterations += 5000
         best_sol_hc, imp_trace = hill_climbing(test_iterations, "swap")
         swap_evaluation = evaluate(colors, best_sol_hc)
         swap_improvement_trace.append(swap_evaluation)
@@ -266,13 +266,13 @@ print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 
 #print(f'Evaluation of order2: {e2}')  # Displaying all decimals
 #print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_hc, imp_trace = hill_climbing(10000, "scramble") # Include either "swap", "inversion" or "scramble"
+best_sol_hc, imp_trace = hill_climbing(20000, "swap") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_hc, 40)
 e3 = evaluate(colors, best_sol_hc)
 print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
 print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 10000, "scramble") # Include either "swap", "inversion" or "scramble"
+best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 20000, "swap") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_mhc, 40)
 e4 = evaluate(colors, best_sol_mhc)
 print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
