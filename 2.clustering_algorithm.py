@@ -87,7 +87,7 @@ def k_means_clustering(file, k):
 # Best iteration
 # Input: file name, number of clusters, number of iterations
 # Output: number of colours, list of colours of best solution
-def best_iteration(file, clusters, iterations):
+def best_solution(file, clusters, iterations):
     ncolors, orig_colors = read_data(file)
     print(ncolors)
 
@@ -99,7 +99,7 @@ def best_iteration(file, clusters, iterations):
     best_solution_distance = 10000
 
     order = list(range(ncolors))
-    best_solution_distance = evaluate(best_solution, order)
+
 
     for i in range(iterations):
         print("Iteration: ", i+1)
@@ -110,33 +110,33 @@ def best_iteration(file, clusters, iterations):
                     best_solution = sorted_colors
                     best_solution_distance = current_solution_distance
 
-    return ncolors, best_solution
+    return ncolors, best_solution, best_solution_distance
 
 
 # ---- main ----
 
 # Testing variables
 FILE1 = "col100.txt"
-NUMBER_CLUSTERS_FILE1 = 7
-NUMBER_ITERATIONS_FILE1 = 50
+NUMBER_CLUSTERS_FILE1 = 25
+NUMBER_ITERATIONS_FILE1 = 200
 
 FILE2 = "col500.txt"
-NUMBER_CLUSTERS_FILE2 = 7
-NUMBER_ITERATIONS_FILE2 = 50
+NUMBER_CLUSTERS_FILE2 = 50
+NUMBER_ITERATIONS_FILE2 = 200
 
 # Call best_iteration function with the variables above
-ncols, best_sorted_colors = best_iteration(FILE1, NUMBER_CLUSTERS_FILE1, NUMBER_ITERATIONS_FILE1)
+ncols, best_sorted_colors, best_distance1 = best_solution(FILE1, NUMBER_CLUSTERS_FILE1, NUMBER_ITERATIONS_FILE1)
 # Plot the best_sorted_color list as a visual
 order = list(range(ncols))
 plot_colors(best_sorted_colors, order)
 # Print to terminal the variables used for the current solution
 
 # Call best_iteration function with the variables above
-ncols, best_sorted_colors = best_iteration(FILE2, NUMBER_CLUSTERS_FILE2, NUMBER_ITERATIONS_FILE2)
+ncols, best_sorted_colors, best_distance2 = best_solution(FILE2, NUMBER_CLUSTERS_FILE2, NUMBER_ITERATIONS_FILE2)
 # Plot the best_sorted_color list as a visual
 order = list(range(ncols))
 plot_colors(best_sorted_colors, order)
 # Print to terminal the variables used for the current solution
 print("Final ordered list variables: ")
-print(*['File:', FILE1, '| Number of clusters:', NUMBER_CLUSTERS_FILE1, '| Number of iterations:', NUMBER_ITERATIONS_FILE1])
-print(*['File:', FILE2, '| Number of clusters:', NUMBER_CLUSTERS_FILE2, '| Number of iterations:', NUMBER_ITERATIONS_FILE2])
+print(*['File:', FILE1, '| Number of clusters:', NUMBER_CLUSTERS_FILE1, '| Number of iterations:', NUMBER_ITERATIONS_FILE1, '| Evaluation: ', best_distance1])
+print(*['File:', FILE2, '| Number of clusters:', NUMBER_CLUSTERS_FILE2, '| Number of iterations:', NUMBER_ITERATIONS_FILE2, '| Evaluation: ', best_distance2])
