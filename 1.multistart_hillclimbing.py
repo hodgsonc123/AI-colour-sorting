@@ -294,16 +294,24 @@ print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 
 #print(f'Evaluation of order2: {e2}')  # Displaying all decimals
 #print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_hc, imp_trace = hill_climbing(2000, "swap") # Include either "swap", "inversion" or "scramble"
+best_sol_hc, imp_trace = hill_climbing(1000000, "swap") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_hc, 40)
 e3 = evaluate(colors, best_sol_hc)
 print(f'Evaluation of order hc: {e3}')  # Displaying all decimals
 print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 2000, "swap") # Include either "swap", "inversion" or "scramble"
+best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 20000, "swap") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_mhc, 40)
 e4 = evaluate(colors, best_sol_mhc)
 print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
 print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-evaluate_best_method()
+plt.figure()
+plt.suptitle('HC Improvement trace')
+plt.plot(imp_trace)
+plt.ylabel("Distance Value")
+plt.xlabel("Improvement No.")
+plt.show()
+
+
+#evaluate_best_method()
