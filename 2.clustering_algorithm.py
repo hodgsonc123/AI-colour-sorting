@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from scipy.spatial.distance import cdist
 
 
 # Read in the color data file
@@ -52,7 +53,6 @@ def k_means_clustering(file, k):
 
     # Create a new dataframe to hold the same info as txt file
     df = pd.DataFrame({'R': col[:, 0], 'G': col[:, 1], 'B': col[:, 2]})
-    #print(df)
 
     # Provide the number of clusters wanted
     number_of_clusters = k
@@ -62,28 +62,17 @@ def k_means_clustering(file, k):
     # Fit the model
     clusters = kmeans.fit_predict(df)
 
-    #print(clusters)  # Print the results, cluster membership of each state
-
     # Add the cluster info to the original dataset as a new column
     df['Cluster'] = clusters  # New column called cluster
-    #print(df)  # Now the data set has a new column
-
-    # Can see how many items are in each cluster
-    #print(df.groupby('Cluster').size())
-
-    # print("now")
-    # print(df.iloc[0:1, 0:3])
 
     # Sort the values by their cluster number
     df.sort_values(['Cluster'], inplace=True)
-    #print(df)
 
     # Remove the cluster identifier column
     df.drop(['Cluster'], axis=1, inplace=True)
 
     # Change from dataframe to numpy array
     final_sorted_colors = df.to_numpy()
-    #print(final_sorted_colors)
 
     return ncolors, col, final_sorted_colors
 
@@ -104,31 +93,80 @@ def best_solution(file, clusters, iterations):
 
     order = list(range(ncolors))
 
-
     for i in range(iterations):
         print("Iteration: ", i+1)
         ncolors, orig_colors, sorted_colors = k_means_clustering(file, clusters)
         current_solution_distance = evaluate(sorted_colors, order)
 
         if current_solution_distance < best_solution_distance:
-                    best_solution = sorted_colors
-                    best_solution_distance = current_solution_distance
+            best_solution = sorted_colors
+            best_solution_distance = current_solution_distance
 
     return ncolors, best_solution, best_solution_distance
 
 
+# Elbow method
+# To determine the optimal value of k in KMeans
+# Input: file name
+def elbow_method(file):
+    ncolors, col = read_data(file)
+
+    # Distortion is calculated as the average of the squared distances from the cluster centers of
+    # the respective clusters. Typically, the Euclidean distance metric is used.
+    distortions = []
+    # Inertias is the sum of squared distances of samples to their closest cluster center.
+    inertias = []
+    mapping1 = {}
+    mapping2 = {}
+    K = range(1, (int(ncolors/2)))
+
+    # Create a new dataframe to hold the same info as txt file
+    df = pd.DataFrame({'R': col[:, 0], 'G': col[:, 1], 'B': col[:, 2]})
+
+    #  Iterate the values of k from 1 to half the number of colours in the file and calculate the
+    #  values of distortions for each value of k and calculate the distortion and inertia for
+    #  each value of k in the given range.
+    for k in K:
+        # Building and fitting the model
+        kmeanModel = KMeans(n_clusters=k).fit(df)
+        kmeanModel.fit(df)
+
+        distortions.append(sum(np.min(cdist(df, kmeanModel.cluster_centers_, 'euclidean'), axis=1)) / df.shape[0])
+        inertias.append(kmeanModel.inertia_)
+
+        mapping1[k] = sum(np.min(cdist(df, kmeanModel.cluster_centers_, 'euclidean'), axis=1)) / df.shape[0]
+        mapping2[k] = kmeanModel.inertia_
+
+    # Plotting the different values of distortion
+    plt.plot(K, distortions, 'bx-')
+    plt.xlabel('Values of K')
+    plt.ylabel('Distortion')
+    plt.title('The Elbow Method using Distortion')
+    plt.show()
+
+    # Plotting the different values of inertias
+    plt.plot(K, inertias, 'bx-')
+    plt.xlabel('Values of K')
+    plt.ylabel('Inertia')
+    plt.title('The Elbow Method using Inertia')
+    plt.show()
+
+
 # ---- main ----
 
-# Testing variables
+# File names that hold the colour data
 FILE1 = "col100.txt"
+FILE2 = "col500.txt"
+
+# Call elbow_method to run the 'elbow method' on each dataset to visually determine the optimal number of clusters
+elbow_method(FILE1)
+elbow_method(FILE2)
+
+# Set the number of clusters and iterations for each dataset
 NUMBER_CLUSTERS_FILE1 = 25
 NUMBER_ITERATIONS_FILE1 = 200
-
-FILE2 = "col500.txt"
 NUMBER_CLUSTERS_FILE2 = 50
 NUMBER_ITERATIONS_FILE2 = 300
-
-
 
 
 # Call best_iteration function with the variables above
@@ -138,12 +176,19 @@ order = list(range(ncols))
 plot_colors(best_sorted_colors, order)
 # Print to terminal the variables used for the current solution
 
+
 # Call best_iteration function with the variables above
 ncols, best_sorted_colors, best_distance2 = best_solution(FILE2, NUMBER_CLUSTERS_FILE2, NUMBER_ITERATIONS_FILE2)
 # Plot the best_sorted_color list as a visual
 order = list(range(ncols))
 plot_colors(best_sorted_colors, order)
+
+
 # Print to terminal the variables used for the current solution
 print("Final ordered list variables: ")
-print(*['File:', FILE1, '| Number of clusters:', NUMBER_CLUSTERS_FILE1, '| Number of iterations:', NUMBER_ITERATIONS_FILE1, '| Evaluation: ', best_distance1])
-print(*['File:', FILE2, '| Number of clusters:', NUMBER_CLUSTERS_FILE2, '| Number of iterations:', NUMBER_ITERATIONS_FILE2, '| Evaluation: ', best_distance2])
+print(*['File:', FILE1, '| Number of clusters:', NUMBER_CLUSTERS_FILE1, '| Number of iterations:',
+        NUMBER_ITERATIONS_FILE1, '| Evaluation: ', best_distance1])
+print(*['File:', FILE2, '| Number of clusters:', NUMBER_CLUSTERS_FILE2, '| Number of iterations:',
+        NUMBER_ITERATIONS_FILE2, '| Evaluation: ', best_distance2])
+
+
