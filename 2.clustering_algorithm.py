@@ -7,6 +7,10 @@ from sklearn.cluster import KMeans
 # Read in the color data file
 # Input: string with file name
 # Output: the number of colours (integer), and a list numpy arrays with all the colours
+from sklearn.datasets import make_blobs
+from sklearn.preprocessing import StandardScaler
+
+
 def read_data(fname):
     cols = np.loadtxt(fname, skiprows=4)  # The first 4 lines have text information, and are ignored
     ncols = len(cols)  # Total number of colours and list of colours
@@ -122,7 +126,10 @@ NUMBER_ITERATIONS_FILE1 = 200
 
 FILE2 = "col500.txt"
 NUMBER_CLUSTERS_FILE2 = 50
-NUMBER_ITERATIONS_FILE2 = 200
+NUMBER_ITERATIONS_FILE2 = 300
+
+
+
 
 # Call best_iteration function with the variables above
 ncols, best_sorted_colors, best_distance1 = best_solution(FILE1, NUMBER_CLUSTERS_FILE1, NUMBER_ITERATIONS_FILE1)
