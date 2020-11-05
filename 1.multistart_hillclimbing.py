@@ -276,7 +276,7 @@ def evaluate_best_method():
 
 def greedy(colors):
 
-    global next_colour
+    next_colour = (0.0,0.0,0.0)
     original_colours = colors[:]
     greedy_ordering = []
 
@@ -286,7 +286,7 @@ def greedy(colors):
 
     greedy_ordering.append(start_position)
 
-    original_colours = np.delete(original_colours, start_position)
+    original_colours = np.delete(original_colours, start_position, 0)#only deleted the R value of the colour
 
     while (len(original_colours) != 0):
         shortest_distance = 600
@@ -300,10 +300,13 @@ def greedy(colors):
                 shortest_distance = distance
 
         index = np.where(original_colours == next_colour)
+        print('next: ', next_colour)
+        print('index', index)
+        int_index = int(index[0])
         greedy_ordering.append(index)
-        #print('index', index)
+        print('index 0', index)
 
-        np.delete(original_colours, index) # I THINK THIS IS THE BIT CAUSING THE PROBLEM. IT DOESNT REMOVE THE ELEMENT
+        original_colours = np.delete(original_colours, int_index)
         start_colour = next_colour
     return greedy_ordering
 
@@ -338,15 +341,17 @@ print(f'Evaluation of order hc: {np.round(e3, 4)}')  # rounding to display only 
 
 best_sol_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(3, 2000, "swap") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_mhc, 40)
+print('mhc sol', best_sol_mhc)
 e4 = evaluate(colors, best_sol_mhc)
 print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
 print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 greedy_sol = greedy(colors)
+print('greedy sol',greedy_sol)
 plot_colors(colors, greedy_sol, 40)
 e5 = evaluate(colors, greedy_sol)
-print(f'Evaluation of order mhc: {e5}')  # Displaying all decimals
-print(f'Evaluation of order mhc: {np.round(e5, 4)}')  # rounding to display only 4 decimals. This is better for display
+print(f'Evaluation of order greedy: {e5}')  # Displaying all decimals
+print(f'Evaluation of order greedy: {np.round(e5, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 plt.figure()
 plt.suptitle('HC Improvement trace')
