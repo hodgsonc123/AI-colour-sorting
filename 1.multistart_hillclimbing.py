@@ -274,44 +274,9 @@ def evaluate_best_method():
     print(f'best scramble solution: {evaluate(colors, best_sol_hc_scramble)}')  # Displaying all decimals
 
 
-def greedy(colors):
-
-    next_colour = (0.0,0.0,0.0)
-    original_colours = colors[:]
-    greedy_ordering = []
-
-    start_position = rnd.randint(0, len(colors)-1)
-    start_colour = original_colours[start_position]
-    print(start_position)
-
-    greedy_ordering.append(start_position)
-
-    original_colours = np.delete(original_colours, start_position, 0)#only deleted the R value of the colour
-
-    while (len(original_colours) != 0):
-        shortest_distance = 600
-        #print(len(original_colours))
-        for colour in original_colours:
-            distance = euclid(start_colour, colour)
-            #print('distance', distance)
-            if distance <= shortest_distance:
-                #print('shortest', shortest_distance)
-                next_colour = colour
-                shortest_distance = distance
-
-        index = np.where(original_colours == next_colour)
-        print('next: ', next_colour)
-        print('index', index)
-        int_index = int(index[0])
-        greedy_ordering.append(index)
-        print('index 0', index)
-
-        original_colours = np.delete(original_colours, int_index)
-        start_colour = next_colour
-    return greedy_ordering
 
 # ***************************************************************************************************************
-ncolors, colors = read_data("col10.txt")  # pass in file to reading function
+ncolors, colors = read_data("col100.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
 print("First 5 colours:")
@@ -329,10 +294,6 @@ e1 = evaluate(colors, order1)
 print(f'Evaluation of order1: {e1}')  # Displaying all decimals
 print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-#e2 = evaluate(colors, order2)
-#print(f'Evaluation of order2: {e2}')  # Displaying all decimals
-#print(f'Evaluation of order2: {np.round(e2, 4)}')  # rounding to display only 4 decimals. This is better for display
-
 best_sol_hc, imp_trace = hill_climbing(1000, "swap") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_hc, 40)
 e3 = evaluate(colors, best_sol_hc)
@@ -346,19 +307,11 @@ e4 = evaluate(colors, best_sol_mhc)
 print(f'Evaluation of order mhc: {e4}')  # Displaying all decimals
 print(f'Evaluation of order mhc: {np.round(e4, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-greedy_sol = greedy(colors)
-print('greedy sol',greedy_sol)
-plot_colors(colors, greedy_sol, 40)
-e5 = evaluate(colors, greedy_sol)
-print(f'Evaluation of order greedy: {e5}')  # Displaying all decimals
-print(f'Evaluation of order greedy: {np.round(e5, 4)}')  # rounding to display only 4 decimals. This is better for display
-
 plt.figure()
 plt.suptitle('HC Improvement trace')
 plt.plot(imp_trace)
 plt.ylabel("Distance Value")
 plt.xlabel("Improvement No.")
 plt.show()
-
 
 #evaluate_best_method()

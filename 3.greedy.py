@@ -88,39 +88,55 @@ def greedy1(colors):
         current_colour = closest_colour
     return greedy_ordering
 
-def greedy(original_colour_values_array):
+def greedy(original_colour_values_array, iterations):
 
-    copy_colour_values_array = original_colour_values_array[:]
-    greedy_ordering = []
+    best_greedy_ordering = random_sol()
 
-    current_position = rnd.randint(0, len(original_colour_values_array)-1)
-    current_colour = original_colour_values_array[current_position]
+    for i in range (iterations):
+        print(i)
+        greedy_ordering = []
+        copy_colour_values_array = original_colour_values_array[:]
 
-    greedy_ordering.append(current_position)
+        current_position = i
+        #current_position = rnd.randint(0, len(original_colour_values_array)-1)
+        current_colour = original_colour_values_array[current_position]
 
-    copy_colour_values_array = np.delete(copy_colour_values_array, current_position, 0)
+        greedy_ordering.append(current_position)
 
-    closest_colour = (0.0,0.0,0.0)
+        copy_colour_values_array = np.delete(copy_colour_values_array, current_position, 0)
 
-    while len(copy_colour_values_array) != 0:
-        distance_to_closest_colour = 10000
+        closest_colour = (0.0,0.0,0.0)
 
-        for i in range(len(copy_colour_values_array)):
-            distance_to_current_colour = euclid(current_colour, copy_colour_values_array[i])
-            if distance_to_current_colour < distance_to_closest_colour:
-                closest_colour = current_colour
-                distance_to_closest_colour = distance_to_current_colour
+        while len(copy_colour_values_array) != 0:
+            distance_to_closest_colour = 1000
 
-        index = np.where(original_colour_values_array == closest_colour) #this is where is goes wrong
-        int_index = int(index[0])
+            pos = 0
 
-        greedy_ordering.append(int_index)
+            for i in range(len(copy_colour_values_array)):
+                distance_to_current_colour = euclid(current_colour, copy_colour_values_array[i])
+                if distance_to_current_colour < distance_to_closest_colour:
+                    closest_colour = current_colour
+                    distance_to_closest_colour = distance_to_current_colour
+                    pos=i
 
-        copy_colour_values_array = np.delete(copy_colour_values_array, int_index, 0)
-        current_colour = closest_colour
-    return greedy_ordering
+            original_position = 0
+            for i in range(len(original_colour_values_array)):
+                orig = original_colour_values_array[i]
+                copy = copy_colour_values_array[pos]
+                if (orig == copy).all():
+                    original_position = i
+
+            greedy_ordering.append(original_position)
+
+            copy_colour_values_array = np.delete(copy_colour_values_array, pos, 0)
+            current_colour = closest_colour
+
+        if(evaluate(original_colour_values_array, greedy_ordering) < evaluate(original_colour_values_array, best_greedy_ordering)):
+            best_greedy_ordering = greedy_ordering[:]
+
+    return best_greedy_ordering
 # ***************************************************************************************************************
-ncolors, colors = read_data("col10.txt")  # pass in file to reading function
+ncolors, colors = read_data("col500.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
 print("First 5 colours:")
@@ -137,7 +153,7 @@ e1 = evaluate(colors, order1)
 print(f'Evaluation of order1: {e1}')  # Displaying all decimals
 print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-greedy_sol = greedy(colors)
+greedy_sol = greedy(colors, ncolors)
 print('greedy sol',greedy_sol)
 plot_colors(colors, greedy_sol, 40)
 e5 = evaluate(colors, greedy_sol)
