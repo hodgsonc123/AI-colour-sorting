@@ -8,10 +8,6 @@ from scipy.spatial.distance import cdist
 # Read in the color data file
 # Input: string with file name
 # Output: the number of colours (integer), and a list numpy arrays with all the colours
-from sklearn.datasets import make_blobs
-from sklearn.preprocessing import StandardScaler
-
-
 def read_data(fname):
     cols = np.loadtxt(fname, skiprows=4)  # The first 4 lines have text information, and are ignored
     ncols = len(cols)  # Total number of colours and list of colours

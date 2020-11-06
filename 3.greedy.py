@@ -88,39 +88,62 @@ def greedy1(colors):
         current_colour = closest_colour
     return greedy_ordering
 
-def greedy(original_colour_values_array):
+
+def greedy(original_colour_values_array, current_pos):
 
     copy_colour_values_array = original_colour_values_array[:]
     greedy_ordering = []
 
-    current_position = rnd.randint(0, len(original_colour_values_array)-1)
+    current_position = current_pos  # rnd.randint(0, len(original_colour_values_array)-1)
     current_colour = original_colour_values_array[current_position]
 
     greedy_ordering.append(current_position)
 
     copy_colour_values_array = np.delete(copy_colour_values_array, current_position, 0)
 
-    closest_colour = (0.0,0.0,0.0)
+    closest_colour = (0.0, 0.0, 0.0)
 
     while len(copy_colour_values_array) != 0:
         distance_to_closest_colour = 10000
+
+        pos = 0
 
         for i in range(len(copy_colour_values_array)):
             distance_to_current_colour = euclid(current_colour, copy_colour_values_array[i])
             if distance_to_current_colour < distance_to_closest_colour:
                 closest_colour = current_colour
                 distance_to_closest_colour = distance_to_current_colour
+                pos = i
 
-        index = np.where(original_colour_values_array == closest_colour) #this is where is goes wrong
-        int_index = int(index[0])
+        for x in range(len(original_colour_values_array)):
+            orig = original_colour_values_array[x]
+            copy = copy_colour_values_array[pos]
+            if (orig == copy).all():
+                greedy_ordering.append(x)
+        #index = np.where(original_colour_values_array == closest_colour) #this is where is goes wrong
+        #int_index = int(index[0])
 
-        greedy_ordering.append(int_index)
+        # greedy_ordering.append(pos)
 
-        copy_colour_values_array = np.delete(copy_colour_values_array, int_index, 0)
+        copy_colour_values_array = np.delete(copy_colour_values_array, pos, 0)
         current_colour = closest_colour
     return greedy_ordering
+
+
+def multi_greedy(ncol, col):
+    best_greedy_ordering = []
+    eval = 10000
+    for i in range(0, (ncol-1)):
+        print(i)
+        greedy_ordering = greedy(col, i)
+        new_eval = evaluate(colors, greedy_ordering)
+        if new_eval < eval:
+            eval = new_eval
+            best_greedy_ordering = greedy_ordering
+
+    return best_greedy_ordering
 # ***************************************************************************************************************
-ncolors, colors = read_data("col10.txt")  # pass in file to reading function
+ncolors, colors = read_data("col500.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
 print("First 5 colours:")
@@ -137,8 +160,8 @@ e1 = evaluate(colors, order1)
 print(f'Evaluation of order1: {e1}')  # Displaying all decimals
 print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-greedy_sol = greedy(colors)
-print('greedy sol',greedy_sol)
+greedy_sol = multi_greedy(ncolors, colors)
+print('greedy sol', greedy_sol)
 plot_colors(colors, greedy_sol, 40)
 e5 = evaluate(colors, greedy_sol)
 print(f'Evaluation of order greedy: {e5}')  # Displaying all decimals
