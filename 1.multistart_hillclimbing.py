@@ -4,7 +4,6 @@ import numpy as np  # Numerical library, used keeing the list of colours and com
 import matplotlib.pyplot as plt
 import random as rnd
 
-
 # Read in the color data file
 # Input: string with file name
 # Output: the number of colours (integer), and a list numpy arrays with all the colours
@@ -12,7 +11,6 @@ def read_data(fname):
     cols = np.loadtxt(fname, skiprows=4)  # The first 4 lines have text information, and are ignored
     ncols = len(cols)  # Total number of colours and list of colours
     return ncols, cols
-
 
 # Display the colors as a strip of color bars
 # Input: list of colors, order of colors, and height/ratio
@@ -26,7 +24,6 @@ def plot_colors(col_list, col_order, ratio=40):
     axes.axis('off')
     plt.show()
 
-
 # Function to generate a random solution (random ordering)  - we can generate a random ordering of the list by using
 # the shuffle function from the random library
 def random_sol():
@@ -39,7 +36,6 @@ def random_sol():
 def euclid(v, u):
     return np.linalg.norm(v - u)
 
-
 # Evaluation function.  Measures the quality of a given solution (ordering of colours)
 # The function computes the sum of the distances between all consecutive colours in the ordering
 # Input: cols: list of colours
@@ -48,7 +44,6 @@ def euclid(v, u):
 def evaluate(cols, ordc):
     adjacentColPairs = [[cols[ordc[i]], cols[ordc[i - 1]]] for i in range(1, len(ordc))]
     return sum([euclid(i[1], i[0]) for i in adjacentColPairs])
-
 
 # random swap function. swaps two random positions in the given array (ordering of colours)
 # input: solution: solution, ordering of colours
@@ -157,7 +152,6 @@ def random_scramble(solution):
 
     return scramble_solution
 
-
 # hill_climbing function. generates random solution, performs a random swap of two elements in that solution
 # compared the euclidean distance between both solution and stores the best with the lowest distance
 # Input: hc_iterations (the number of iterations to run the random swap check) and permutation method e.g. 'swap', 'inversion', 'scramble'
@@ -203,7 +197,6 @@ def hill_climbing(hc_iterations, method_choice):
                 hc_improvement_trace.append(ran_scramble_solution_distance)
         else:
             print("invalid algorithm")
-
         print(i)
 
     return hc_best_solution, hc_improvement_trace
@@ -273,8 +266,6 @@ def evaluate_best_method():
     plt.show()
     print(f'best scramble solution: {evaluate(colors, best_sol_hc_scramble)}')  # Displaying all decimals
 
-
-
 # ***************************************************************************************************************
 ncolors, colors = read_data("col100.txt")  # pass in file to reading function
 
@@ -286,13 +277,9 @@ print(colors[0:5, :])  # prints rgb values for first five colours
 order1 = list(range(ncolors))  # list of consecutive numbers from 0 to ncolors
 plot_colors(colors, order1)  # You will notice that colors are not ordered in the file
 
-order2 = random_sol()
-print("Another random solution: ", order2)
-plot_colors(colors, order2)  # the colors are not ordered, but this is a different order
-
 e1 = evaluate(colors, order1)
-print(f'Evaluation of order1: {e1}')  # Displaying all decimals
-print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
+print(f'Evaluation of unordered: {e1}')  # Displaying all decimals
+print(f'Evaluation of unordered: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 best_sol_hc, imp_trace = hill_climbing(1000, "swap") # Include either "swap", "inversion" or "scramble"
 plot_colors(colors, best_sol_hc, 40)

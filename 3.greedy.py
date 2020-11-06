@@ -35,7 +35,6 @@ def random_sol():
     rnd.shuffle(sol)
     return sol
 
-
 def euclid(v, u):
     return np.linalg.norm(v - u)
 
@@ -52,59 +51,22 @@ def evaluate(cols, ordc):
 # then searches the list of colours to find the closest colour match (shortest euclidean distance) to that random colour.
 # this colour is then entered in the new array of the new greedy ordering. the process repeats until we are left with the best order
 
-def greedy1(colors):
-
-    closest_colour = (0.0,0.0,0.0)
-    original_colours = colors[:]
-    greedy_ordering = []
-
-    start_position = rnd.randint(0, len(colors)-1)
-    current_colour = original_colours[start_position]
-    print(start_position)
-
-    greedy_ordering.append(start_position)
-
-    original_colours = np.delete(original_colours, start_position, 0)
-
-    while (len(original_colours) != 0):
-        shortest_distance = 600
-        #print(len(original_colours))
-        for colour in original_colours:
-            distance = euclid(current_colour, colour)
-            #print('distance', distance)
-            if distance <= shortest_distance:
-                #print('shortest', shortest_distance)
-                closest_colour = colour
-                shortest_distance = distance
-
-        index = np.where(original_colours == closest_colour)
-        print('next: ', closest_colour)
-        print('index', index)
-        int_index = int(index[0])
-        greedy_ordering.append(index)
-        print('index 0', index)
-
-        original_colours = np.delete(original_colours, int_index)
-        current_colour = closest_colour
-    return greedy_ordering
-
-
 def greedy(original_colour_values_array, current_pos):
 
     copy_colour_values_array = original_colour_values_array[:]
     greedy_ordering = []
 
-    current_position = current_pos  # rnd.randint(0, len(original_colour_values_array)-1)
-    current_colour = original_colour_values_array[current_position]
+    # rnd.randint(0, len(original_colour_values_array)-1)
+    current_colour = original_colour_values_array[current_pos]
 
-    greedy_ordering.append(current_position)
+    greedy_ordering.append(current_pos)
 
-    copy_colour_values_array = np.delete(copy_colour_values_array, current_position, 0)
+    copy_colour_values_array = np.delete(copy_colour_values_array, current_pos, 0)
 
     closest_colour = (0.0, 0.0, 0.0)
 
     while len(copy_colour_values_array) != 0:
-        distance_to_closest_colour = 10000
+        distance_to_closest_colour = 1000
 
         pos = 0
 
@@ -120,10 +82,6 @@ def greedy(original_colour_values_array, current_pos):
             copy = copy_colour_values_array[pos]
             if (orig == copy).all():
                 greedy_ordering.append(x)
-        #index = np.where(original_colour_values_array == closest_colour) #this is where is goes wrong
-        #int_index = int(index[0])
-
-        # greedy_ordering.append(pos)
 
         copy_colour_values_array = np.delete(copy_colour_values_array, pos, 0)
         current_colour = closest_colour
@@ -132,18 +90,19 @@ def greedy(original_colour_values_array, current_pos):
 
 def multi_greedy(ncol, col):
     best_greedy_ordering = []
-    eval = 10000
-    for i in range(0, (ncol-1)):
+    best_eval = evaluate(col, random_sol())
+
+    for i in range(ncol):
         print(i)
         greedy_ordering = greedy(col, i)
         new_eval = evaluate(colors, greedy_ordering)
-        if new_eval < eval:
-            eval = new_eval
+        if new_eval < best_eval:
+            best_eval = new_eval
             best_greedy_ordering = greedy_ordering
 
     return best_greedy_ordering
 # ***************************************************************************************************************
-ncolors, colors = read_data("col500.txt")  # pass in file to reading function
+ncolors, colors = read_data("col100.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
 print("First 5 colours:")
@@ -152,13 +111,6 @@ print(colors[0:5, :])  # prints rgb values for first five colours
 # Plot all the colors in the order they are listed in the file
 order1 = list(range(ncolors))  # list of consecutive numbers from 0 to ncolors
 plot_colors(colors, order1)  # You will notice that colors are not ordered in the file
-
-order2 = random_sol()
-print("Another random solution: ", order2)
-plot_colors(colors, order2)  # the colors are not ordered, but this is a different order
-e1 = evaluate(colors, order1)
-print(f'Evaluation of order1: {e1}')  # Displaying all decimals
-print(f'Evaluation of order1: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 greedy_sol = multi_greedy(ncolors, colors)
 print('greedy sol', greedy_sol)
