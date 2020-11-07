@@ -50,7 +50,10 @@ def evaluate(cols, ordc):
 
 # greedy constructive heuristic function. takes in a list of colours, selects a random point for the beginning of a new order array
 # then searches the list of colours to find the closest colour match (shortest euclidean distance) to that random colour.
-# this colour is then entered in the new array of the new greedy ordering. the process repeats until we are left with the best order
+# this colour is then entered in the new array of the new greedy ordering and removed from the unordered list. the process repeats until we are left with the best order
+# input: original_colour_values_array, array of colours stored as RGB values
+#        current_pos, number of colours in the file
+# output: best_greedy_ordering, the best greedy ordering
 
 def greedy(original_colour_values_array, current_pos):
 
@@ -88,18 +91,20 @@ def greedy(original_colour_values_array, current_pos):
         current_colour = closest_colour
     return greedy_ordering
 
-
+# multi greedy function. Repeats greedy function for each position in the array as the starting point and returns the best possible greedy ordering.
+# input: ncol, number of colours in the file
+#        col, array of colours stored as RGB values
+# output: best_greedy_ordering, the best greedy ordering
 def multi_greedy(ncol, col):
-    best_greedy_ordering = []
-    best_eval = evaluate(col, random_sol())
+    best_greedy_ordering = []  # array to store the best ordering
+    best_eval = evaluate(col, random_sol())  # evaluate a random solution as a starting value for the best evaluation
 
-    for i in range(ncol):
-        print(i)
-        greedy_ordering = greedy(col, i)
-        new_eval = evaluate(colors, greedy_ordering)
-        if new_eval < best_eval:
-            best_eval = new_eval
-            best_greedy_ordering = greedy_ordering
+    for i in range(ncol):  # repeat for the number of colours
+        greedy_ordering = greedy(col, i)  # return greedy ordering for position i as start point
+        new_eval = evaluate(colors, greedy_ordering)  # evaluate this greedy ordering
+        if new_eval < best_eval:  # if the current evaluation is better than the best
+            best_eval = new_eval  # set this as the new best
+            best_greedy_ordering = greedy_ordering  # set the current ordering as the best ordering
 
     return best_greedy_ordering
 # ***************************************************************************************************************
@@ -111,11 +116,26 @@ print(colors[0:5, :])  # prints rgb values for first five colours
 
 # Plot all the colors in the order they are listed in the file
 order1 = list(range(ncolors))  # list of consecutive numbers from 0 to ncolors
-plot_colors(colors, order1)  # You will notice that colors are not ordered in the file
+print('\nUnordered colours from file...')
+plot_colors(colors, order1, 20)  # You will notice that colors are not ordered in the file
+e1 = evaluate(colors, order1)
+print(f'Evaluation of unordered: {e1}')  # Displaying all decimals
+print(f'Evaluation of unordered: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
-greedy_sol = multi_greedy(ncolors, colors)
-print('greedy sol', greedy_sol)
-plot_colors(colors, greedy_sol, 40)
+print('\nGenerating greedy solution...')
+greedy_sol = greedy(colors, rnd.randint(0, ncolors-1))
+print('Greedy sol', greedy_sol)
+plot_colors(colors, greedy_sol, 20)
 e5 = evaluate(colors, greedy_sol)
-print(f'Evaluation of order greedy: {e5}')  # Displaying all decimals
-print(f'Evaluation of order greedy: {np.round(e5, 4)}')  # rounding to display only 4 decimals. This is better for display
+print(f'Evaluation of order, greedy: {e5}')  # Displaying all decimals
+print(f'Evaluation of order, greedy: {np.round(e5, 4)}')  # rounding to display only 4 decimals. This is better for display
+
+print('\nGenerating multi greedy solution...')
+multi_greedy_sol = multi_greedy(ncolors, colors)
+print('Multi greedy sol', multi_greedy_sol)
+plot_colors(colors, multi_greedy_sol, 20)
+multi_greedy_evaluation = evaluate(colors, multi_greedy_sol)
+print(f'Evaluation of order, multi greedy: {multi_greedy_evaluation}')  # Displaying all decimals
+print(f'Evaluation of order, multi greedy: {np.round(multi_greedy_evaluation, 4)}')  # rounding to display only 4 decimals. This is better for display
+
+
