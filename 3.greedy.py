@@ -35,6 +35,7 @@ def random_sol():
     rnd.shuffle(sol)
     return sol
 
+# euclidean distance function. calculates the distance between two colours
 def euclid(v, u):
     return np.linalg.norm(v - u)
 
