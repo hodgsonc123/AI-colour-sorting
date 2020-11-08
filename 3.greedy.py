@@ -55,7 +55,7 @@ def evaluate(cols, ordc):
 #        current_pos, number of colours in the file
 # output: best_greedy_ordering, the best greedy ordering
 
-def greedy(original_colour_values_array, current_pos):
+def greedy(original_colour_values_array, ncols, current_pos):
 
     copy_colour_values_array = original_colour_values_array[:]
     greedy_ordering = []
@@ -81,7 +81,7 @@ def greedy(original_colour_values_array, current_pos):
                 distance_to_closest_colour = distance_to_current_colour
                 pos = i
 
-        for x in range(len(original_colour_values_array)):
+        for x in range(ncols):
             orig = original_colour_values_array[x]
             copy = copy_colour_values_array[pos]
             if (orig == copy).all():
@@ -100,7 +100,7 @@ def multi_greedy(ncol, col):
     best_eval = evaluate(col, random_sol())  # evaluate a random solution as a starting value for the best evaluation
 
     for i in range(ncol):  # repeat for the number of colours
-        greedy_ordering = greedy(col, i)  # return greedy ordering for position i as start point
+        greedy_ordering = greedy(col, ncol, i)  # return greedy ordering for position i as start point
         new_eval = evaluate(colors, greedy_ordering)  # evaluate this greedy ordering
         if new_eval < best_eval:  # if the current evaluation is better than the best
             best_eval = new_eval  # set this as the new best
@@ -123,7 +123,7 @@ print(f'Evaluation of unordered: {e1}')  # Displaying all decimals
 print(f'Evaluation of unordered: {np.round(e1, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 print('\nGenerating greedy solution...')
-greedy_sol = greedy(colors, rnd.randint(0, ncolors-1))
+greedy_sol = greedy(colors, ncolors, rnd.randint(0, ncolors-1))
 print('Greedy sol', greedy_sol)
 plot_colors(colors, greedy_sol, 20)
 e5 = evaluate(colors, greedy_sol)
