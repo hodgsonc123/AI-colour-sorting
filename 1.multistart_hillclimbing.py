@@ -111,7 +111,6 @@ def random_inverse(solution):
 
     return inverse_solution
 
-
 # scramble function, randomly rearranges values between two random points in given array
 # input: solution, array ordering of colours
 # output: scramble_solution, array with scrambled values between two points
@@ -165,7 +164,6 @@ def hill_climbing(hc_iterations, method_choice, cols):
     if method_choice == "swap":
         for i in range(hc_iterations):
             best_solution_eval = evaluate(cols, hc_best_solution)
-            random_swap(hc_best_solution)
             ran_swap_solution = random_swap(hc_best_solution)
             ran_swap_solution_eval = evaluate(cols, ran_swap_solution)
 
@@ -176,8 +174,7 @@ def hill_climbing(hc_iterations, method_choice, cols):
     elif method_choice == "inversion":
         for i in range(hc_iterations):
             best_solution_eval = evaluate(cols, hc_best_solution)
-            random_inverse(hc_best_solution)
-            ran_inverse_solution = random_scramble(hc_best_solution)
+            ran_inverse_solution = random_inverse(hc_best_solution)
             ran_inverse_solution_eval = evaluate(cols, ran_inverse_solution)
 
             if ran_inverse_solution_eval < best_solution_eval:
@@ -187,7 +184,6 @@ def hill_climbing(hc_iterations, method_choice, cols):
     elif method_choice == "scramble":
         for i in range(hc_iterations):
             best_solution_eval = evaluate(cols, hc_best_solution)
-            random_scramble(hc_best_solution)
             ran_scramble_solution = random_scramble(hc_best_solution)
             ran_scramble_solution_eval = evaluate(cols, ran_scramble_solution)
 
@@ -268,7 +264,7 @@ def evaluate_best_method(cols, ncols, increments):
     print(f'best scramble solution {ncols}: {evaluate(cols, best_sol_hc_scramble)}')  # Displaying  best scramble evaluation value
 
 # ***************************************************************************************************************
-ncolors100, colors100 = read_data("col100.txt")  # pass in 100 colour file to reading function
+ncolors100, colors100 = read_data("col10.txt")  # pass in 100 colour file to reading function
 ncolors500, colors500 = read_data("col500.txt")  # pass in 500 colour file file to reading function
 
 print(f'Number of colours 100: {ncolors100}')
@@ -284,14 +280,14 @@ print(f'Evaluation of unordered 100: {unordered_100_eval}')  # Displaying all de
 print(f'Evaluation of unordered 100: {np.round(unordered_100_eval, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 print('\nGenerating hill climb 100 solution...')
-hc_best100, imp_trace100 = hill_climbing(200, "swap", colors100 ) # Run hill climb on 100. Include either "swap", "inversion" or "scramble"
+hc_best100, imp_trace100 = hill_climbing(20, "inversion", colors100 ) # Run hill climb on 100. Include either "swap", "inversion" or "scramble"
 plot_colors(colors100, hc_best100, 20)
 hc_100_eval = evaluate(colors100, hc_best100) # evaluate the solution
 print(f'Evaluation of order hc 100: {hc_100_eval}')  # Displaying all decimals
 print(f'Evaluation of order hc 100: {np.round(hc_100_eval, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 print('\nGenerating multi hill climb 100 solution...')
-mhc_best100 = multi_hill_climbing(3, 200, "swap", colors100) # Run multi hill climb on 100. Include either "swap", "inversion" or "scramble"
+mhc_best100 = multi_hill_climbing(3, 20, "inversion", colors100) # Run multi hill climb on 100. Include either "swap", "inversion" or "scramble"
 plot_colors(colors100, mhc_best100, 20)
 print('\nmhc_best100:', mhc_best100)
 mhc_100_eval = evaluate(colors100, mhc_best100)# evaluate the solution
@@ -308,14 +304,14 @@ print(f'Evaluation of unordered 500: {unordered_500_eval}')  # Displaying all de
 print(f'Evaluation of unordered 500: {np.round(unordered_500_eval, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 print('\nGenerating hill climb 500 solution...')
-hc_best500, imp_trace500 = hill_climbing(1000, "swap", colors500 ) # Include either "swap", "inversion" or "scramble"
+hc_best500, imp_trace500 = hill_climbing(100, "swap", colors500 ) # Include either "swap", "inversion" or "scramble"
 plot_colors(colors500, hc_best500, 40)
 hc_500_eval = evaluate(colors500, hc_best500)# evaluate the solution
 print(f'Evaluation of order hc 500: {hc_500_eval}')  # Displaying all decimals
 print(f'Evaluation of order hc 500: {np.round(hc_500_eval, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 print('\nGenerating multi hill climb 500 solution...')
-mhc_best500 = multi_hill_climbing(3, 1000, "swap", colors500) # Include either "swap", "inversion" or "scramble"
+mhc_best500 = multi_hill_climbing(3, 100, "swap", colors500) # Include either "swap", "inversion" or "scramble"
 plot_colors(colors500, mhc_best500, 40)
 print('\nmhc_best500:', mhc_best500)
 mhc_500_eval= evaluate(colors500, mhc_best500)# evaluate the solution
@@ -340,4 +336,4 @@ plt.xlabel("Improvement No.")
 plt.show()
 
 evaluate_best_method(colors100, ncolors100, 50) # WARNING: TAKES ABOUT AN HOUR TO RUN. run method to evaluate best method
-#evaluate_best_method(colors500, ncolors500, 10000) # WARNING: TAKES ABOUT AN 2 HOURS TO RUN. run method to evaluate best method
+evaluate_best_method(colors500, ncolors500, 10000) # WARNING: TAKES ABOUT AN 2 HOURS TO RUN. run method to evaluate best method
