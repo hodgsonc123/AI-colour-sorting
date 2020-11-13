@@ -76,7 +76,7 @@ def greedy(original_colour_values_array, ncols, current_pos):
 
         for i in range(len(copy_colour_values_array)):
             distance_to_current_colour = euclid(current_colour, copy_colour_values_array[i])
-            if distance_to_current_colour < distance_to_closest_colour:
+            if distance_to_current_colour <= distance_to_closest_colour:
                 closest_colour = current_colour
                 distance_to_closest_colour = distance_to_current_colour
                 pos = i
@@ -86,6 +86,7 @@ def greedy(original_colour_values_array, ncols, current_pos):
             copy = copy_colour_values_array[pos]
             if (orig == copy).all():
                 greedy_ordering.append(x)
+                break
 
         copy_colour_values_array = np.delete(copy_colour_values_array, pos, 0)
         current_colour = closest_colour
@@ -108,7 +109,7 @@ def multi_greedy(ncol, col):
 
     return best_greedy_ordering
 # ***************************************************************************************************************
-ncolors, colors = read_data("col100.txt")  # pass in file to reading function
+ncolors, colors = read_data("col500.txt")  # pass in file to reading function
 
 print(f'Number of colours: {ncolors}')
 print("First 5 colours:")

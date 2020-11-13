@@ -336,4 +336,4 @@ plt.xlabel("Improvement No.")
 plt.show()
 
 evaluate_best_method(colors100, ncolors100, 50) # WARNING: TAKES ABOUT AN HOUR TO RUN. run method to evaluate best method
-evaluate_best_method(colors500, ncolors500, 10000) # WARNING: TAKES ABOUT AN 2 HOURS TO RUN. run method to evaluate best method
+evaluate_best_method(colors500, ncolors500, 100) # WARNING: TAKES ABOUT AN 2 HOURS TO RUN. run method to evaluate best method
