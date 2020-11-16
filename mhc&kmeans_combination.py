@@ -55,32 +55,45 @@ def random_sol(length):
     return sol
 
 
-# random swap function. swaps two random positions in the given array (ordering of colours)
-# input: solution: solution, ordering of colours
-# output: swap_solution, ordering of colours with two random positions swapped
-def random_swap(solution):
+# inverse function, inverts values between two positions in given array of colour order
+# input: solution, ordering of colours
+# output: inverse_solution, inverted values between two points in array
+def random_inverse(solution):
     # take copy of the solution passed in
-    swap_solution = solution[:]
+    inverse_solution = solution[:]
 
     # generate two random positions in the array
-    ran_position1 = rnd.randint(0, len(swap_solution) - 1)
-    ran_position2 = rnd.randint(0, len(swap_solution) - 1)
+    ran_position1 = rnd.randint(0, len(inverse_solution) - 1)
+    ran_position2 = rnd.randint(0, len(inverse_solution) - 1)
 
-    # notes for team: should we put a check in to make sure that the ran_positions dont give the same value
     # If random positions are the same then change ran_position2
     while ran_position1 == ran_position2:
-        ran_position2 = rnd.randint(0, len(swap_solution) - 1)
+        ran_position2 = rnd.randint(0, len(inverse_solution) - 1)
 
-    # store positions being swapped in temp variables
-    swap_val1 = swap_solution[ran_position1]
-    swap_val2 = swap_solution[ran_position2]
+    # Order the random positions so ran_position1 is smaller than ran_position2
+    if ran_position1 > ran_position2:
+        placeholder = ran_position1
+        ran_position1 = ran_position2
+        ran_position2 = placeholder
 
-    # complete swap by swapping values at the random positions
-    swap_solution[ran_position1] = swap_val2
-    swap_solution[ran_position2] = swap_val1
+    # Take the section that we want to inverse
+    inverse_selection = inverse_solution[ran_position1:ran_position2]
+    # Reverse all the indexes in the section we want to inverse
+    inverse_selection.reverse()
 
-    return swap_solution  # return the random swap solution
+    # Put solution back together
+    # Get the original section at the start of the solution
+    section_before_rnd1 = inverse_solution[0:ran_position1]
+    # Get the section at the end of the solution
+    section_after_rnd2 = inverse_solution[ran_position2:len(inverse_solution)]
+    # Add the start section to the solution
+    inverse_solution = section_before_rnd1
+    # Add the reversed section to the solution
+    inverse_solution.extend(inverse_selection)
+    # Finally add the end section to the solution
+    inverse_solution.extend(section_after_rnd2)
 
+    return inverse_solution
 
 # hill_climbing function. generates random solution, performs a random swap of two elements in that solution
 # compared the euclidean distance between both solution and stores the best with the lowest distance
@@ -96,15 +109,15 @@ def hill_climbing(length, sol, hc_iterations, method_choice):
     for i in range(hc_iterations):
         best_solution_distance = evaluate(sol, hc_best_solution)
 
-        if method_choice == "swap":
-            random_swap(hc_best_solution)
+        if method_choice == "inverse":
+            random_inverse(hc_best_solution)
 
-            ran_swap_solution = random_swap(hc_best_solution)
-            ran_swap_solution_distance = evaluate(colors, ran_swap_solution)
+            ran_inverse_solution = random_inverse(hc_best_solution)
+            ran_inverse_solution_distance = evaluate(colors, ran_inverse_solution)
 
-            if ran_swap_solution_distance < best_solution_distance:
-                hc_best_solution = ran_swap_solution[:]
-                hc_improvement_trace.append(ran_swap_solution_distance)
+            if ran_inverse_solution_distance < best_solution_distance:
+                hc_best_solution = ran_inverse_solution[:]
+                hc_improvement_trace.append(ran_inverse_solution_distance)
 
         else:
             print("invalid algorithm")
@@ -129,25 +142,6 @@ def multi_hill_climbing(length, sol, mhc_iterations, hc_iterations, method_choic
             mhc_improvement_trace.append(current_solution)
 
     return mhc_best_solution, mhc_best_solution_distance, mhc_improvement_trace
-
-
-def evaluate_best_method():
-    test_iterations = 0
-    swap_improvement_trace = []
-
-    for i in range(6):
-        test_iterations += 5000
-        best_sol_hc, imp_trace = hill_climbing(test_iterations, "swap")
-        swap_evaluation = evaluate(colors, best_sol_hc)
-        swap_improvement_trace.append(swap_evaluation)
-
-    plt.figure()
-    plt.suptitle('Hill Climbing Testing Iteration number')
-    plt.plot(swap_improvement_trace)
-    plt.ylabel("Distance Value")
-    plt.xlabel("Iteration")
-    plt.show()
-
 
 # ***************************************************************************************************************
 
@@ -220,8 +214,8 @@ def k_means_clustering(i, iterations, ncol, bestsol, k):
             indiv_cluster2 = ic.to_numpy()
             length = len(indiv_cluster2)
 
-            best_indcluster_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(length, indiv_cluster2, 3, 10000,
-                                                                                            "swap")  # Include either "swap", "inversion" or "scramble"
+            best_indcluster_mhc, best_sol_mhc_distance, mhc_imp_trace = multi_hill_climbing(length, indiv_cluster2, 1, 20000,
+                                                                                            "inverse")  # Include either "swap", "inversion" or "scramble"
 
             new_ordered_list = np.empty((0, 3))
 
@@ -284,15 +278,15 @@ NUMBER_CLUSTERS_FILE2 = 100
 NUMBER_ITERATIONS_FILE2 = 500
 
 # ------------------------------------------------------------------------------------
-ncolors, colors = read_data("col500.txt")  # pass in file to reading function
+ncolors, colors = read_data("col100.txt")  # pass in file to reading function
 
 # Call best_iteration function with the variables above
-ncols, best_sorted_colors, best_distance2 = best_solution(ncolors, colors, NUMBER_CLUSTERS_FILE2,
-                                                          NUMBER_ITERATIONS_FILE2)
+ncols, best_sorted_colors, best_distance2 = best_solution(ncolors, colors, NUMBER_CLUSTERS_FILE1,
+                                                          NUMBER_ITERATIONS_FILE1)
 # Plot the best_sorted_color list as a visual
 order = list(range(ncols))
 plot_colors(best_sorted_colors, order)
 
 print("Final ordered list variables: ")
-print(*['File:', FILE2, '| Number of clusters:', NUMBER_CLUSTERS_FILE2, '| Number of iterations:',
-        NUMBER_ITERATIONS_FILE2, '| Evaluation: ', best_distance2])
+print(*['File:', FILE1, '| Number of clusters:', NUMBER_CLUSTERS_FILE1, '| Number of iterations:',
+        NUMBER_ITERATIONS_FILE1, '| Evaluation: ', best_distance2])
