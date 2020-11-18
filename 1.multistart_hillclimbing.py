@@ -280,7 +280,7 @@ print(f'Evaluation of unordered 100: {unordered_100_eval}')  # Displaying all de
 print(f'Evaluation of unordered 100: {np.round(unordered_100_eval, 4)}')  # rounding to display only 4 decimals. This is better for display
 
 print('\nGenerating hill climb 100 solution...')
-hc_best100, imp_trace100 = hill_climbing(20, "inversion", colors100 ) # Run hill climb on 100. Include either "swap", "inversion" or "scramble"
+hc_best100, imp_trace100 = hill_climbing(100000, "inversion", colors100 ) # Run hill climb on 100. Include either "swap", "inversion" or "scramble"
 plot_colors(colors100, hc_best100, 20)
 hc_100_eval = evaluate(colors100, hc_best100) # evaluate the solution
 print(f'Evaluation of order hc 100: {hc_100_eval}')  # Displaying all decimals

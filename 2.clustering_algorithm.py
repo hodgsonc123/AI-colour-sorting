@@ -187,4 +187,17 @@ print(*['File:', FILE1, '| Number of clusters:', NUMBER_CLUSTERS_FILE1, '| Numbe
 print(*['File:', FILE2, '| Number of clusters:', NUMBER_CLUSTERS_FILE2, '| Number of iterations:',
         NUMBER_ITERATIONS_FILE2, '| Evaluation: ', best_distance2])
 
+def find_order(orig_col_array, col_sol_array):
+    new_order = []
+    counter = 0
+    for i in range(len(orig_col_array)):
+        if (col_sol_array[i] == orig_col_array[counter]).all():
+                new_order.append(counter)
+                counter = 0
+        else:
+            counter+=1
+
+    return new_order # re orderes colour list RGB values
+ncolors100, cols100 = read_data(FILE1)
+ncolors500, cols500 = read_data(FILE2)
 

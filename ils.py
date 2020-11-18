@@ -111,45 +111,6 @@ def random_inverse(solution):
 
     return inverse_solution
 
-# scramble function, randomly rearranges values between two random points in given array
-# input: solution, array ordering of colours
-# output: scramble_solution, array with scrambled values between two points
-def random_scramble(solution):
-    # take copy of the solution passed in
-    scramble_solution = solution[:]
-
-    # generate two random positions in the array
-    ran_position1 = rnd.randint(0, len(scramble_solution) - 1)
-    ran_position2 = rnd.randint(0, len(scramble_solution) - 1)
-
-    # while/if random positions are the same then change ran_position2
-    while ran_position1 == ran_position2:
-        ran_position2 = rnd.randint(0, len(scramble_solution) - 1)
-
-    # Order the random positions so ran_position1 is smaller than ran_position2
-    if ran_position1 > ran_position2:
-        placeholder = ran_position1
-        ran_position1 = ran_position2
-        ran_position2 = placeholder
-
-    # Take the section that we want to scramble
-    scramble_section = scramble_solution[ran_position1:ran_position2]
-    # Shuffle all the indexes in the section we want to scramble
-    rnd.shuffle(scramble_section)
-
-    # Put solution back together
-    # Get the unscrambled section at the start of the solution
-    section_before_rnd1 = scramble_solution[0:ran_position1]
-    # Get the unscrambled section at the end of the solution
-    section_after_rnd2 = scramble_solution[ran_position2:len(scramble_solution)]
-    # Add the start section to the solution
-    scramble_solution = section_before_rnd1
-    # Add the scrambled section to the solution
-    scramble_solution.extend(scramble_section)
-    # Finally add the end section to the solution
-    scramble_solution.extend(section_after_rnd2)
-
-    return scramble_solution
 
 # hill_climbing function. generates random solution, performs a random swap of two elements in that solution
 # compared the euclidean distance between both solution and stores the best with the lowest distance
@@ -205,7 +166,7 @@ def reorder(order, orig_colour_list):
 # input: number, the number of swaps/how sever a perturb you would like
 #        sol, a solution/colour ordering
 # output: the pertubed solution/ordering
-def perturb(number, sol):
+def perturb(sol, number):
     perturb_sol = sol[:] # make copy of solution
 
     for i in range(number): # for the number passed in do
@@ -260,7 +221,7 @@ print(f'Evaluation of unordered 100: {np.round(unordered_100_eval, 4)}')  # roun
 
 
 print('\nGenerating ils 100 solution...')
-ils_best100, ils_trace= ils(3, 20000, "inversion", colors100) # Run multi hill climb on 100. Include either "swap", "inversion" or "scramble"
+ils_best100, ils_trace= ils(5, 20000, "inversion", colors100) # Run multi hill climb on 100. Include either "swap", "inversion" or "scramble"
 plot_colors(colors100, ils_best100, 20)
 print('\nmhc_best100:', ils_best100)
 ils_100_eval = evaluate(colors100, ils_best100)# evaluate the solution
